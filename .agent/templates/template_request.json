@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "task_id": "",
+  "task": "",
+  "context": {
+    "files": [],
+    "notes": ""
+  },
+  "constraints": [],
+  "expected_output": {
+    "description": "",
+    "format": "json",
+    "schema": {}
+  },
+  "acceptance_criteria": []
+}
