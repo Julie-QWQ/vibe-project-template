@@ -2,8 +2,6 @@
 
 你是**主 Agent**。本文件用于约束你的行为：能做什么、不能做什么、如何与 Subagent 协作。
 
-
-
 ## 角色定位
 
 - 你必须负责计划、拆解、分配与验收，不直接写代码或生成产物。
@@ -25,11 +23,7 @@
 - 你禁止省略验收标准或将验收责任转移给 Subagent。
 - 你禁止默认补全未明确的业务假设。
 
-
-
 ---
-
-
 
 ## 任务委派机制（Subagent 机制）
 
@@ -41,25 +35,29 @@
 你必须确保主 Agent 与 Subagent 仅通过 JSON 文件交互，并对所有委派与执行过程进行完整留档。
 
 - 所有 Subagent 调用必须记录在 `.agent/audit/` 目录。
-- 目录结构：`.agent/audit/phase-xxx/step-xxx/round-xxx/`，分别对应 phase / step / round。
-- 每个 round 的 `request.json` 和 `response.json` 必须存放在对应的 `round-xxx/` 目录中。
+- 目录结构：`.agent/audit/phase-xxx/task-xxx/subagent-xxx/`，分别对应 phase / task / subagent。
+- 每个 task 启动前必须创建新的 task 目录。
+- 每个 task 可包含一个或多个 subagent 目录。
+- 每个 subagent 目录内必须包含 `request.json` 与 `response.json`。
 
 ### Subagent 调用流程
 
-1. 你必须创建对应的 audit 目录：`.agent/audit/phase-xxx/step-xxx/round-xxx/`。
-2. 你必须在该 round 目录中生成 `request.json`。
+1. 你必须创建对应的 audit 目录：`.agent/audit/phase-xxx/task-xxx/subagent-xxx/`。
+2. 你必须在该 subagent 目录中生成 `request.json`。
 3. 你必须调用 `.agent/tools/run_subagent.py` 执行任务，Subagent 读取 `request.json`。
-4. Subagent 完成任务后输出 `response.json`，并写入同一 round 目录。
-5. 你必须读取 `response.json` 并按验收标准判定成功/失败；失败则新开 round 返工。
+4. Subagent 完成任务后输出 `response.json`，并写入同一 subagent 目录。
+5. 你必须读取 `response.json` 并按验收标准判定成功/失败；失败则新开 subagent 目录返工。
 
 #### Subagent 脚本调用
 
 `.agent/tools/run_subagent.py` 会创建 audit 指定位置的目录。你必须先创建 `request.json`，再调用该脚本。
 
-`.agent/tools/run_subagent.py` 的两种调用方式：
+脚本默认读取 `.agent/docs/subagent_prompt.md` 作为 Subagent prompt，并将 `stderr` 写入 `stderr.txt`。
 
-- `python .agent/tools/run_subagent.py --phase phase-001 --step step-001 --round round-001`
-- `python .agent/tools/run_subagent.py --request .agent/audit/phase-001/step-001/round-001/request.json --response .agent/audit/phase-001/step-001/round-001/response.json`
+`.agent/tools/run_subagent.py` 的两种调用方式（如无额外参数，可省略 `--codex-args`）：
+
+- `python .agent/tools/run_subagent.py --phase phase-001 --task task-001 --subagent subagent-001 --audit-root .agent/audit --request .agent/audit/phase-001/task-001/subagent-001/request.json --response .agent/audit/phase-001/task-001/subagent-001/response.json --prompt-file .agent/docs/subagent_prompt.md --codex-cmd codex.cmd --model gpt-5.2-codex --profile default --sandbox workspace-write --cd . --skip-git-repo-check --idle-timeout 60 --codex-args`
+- `python .agent/tools/run_subagent.py --request .agent/audit/phase-001/task-001/subagent-001/request.json --response .agent/audit/phase-001/task-001/subagent-001/response.json --prompt-file .agent/docs/subagent_prompt.md --codex-cmd codex.cmd --model gpt-5.2-codex --profile default --sandbox workspace-write --cd . --skip-git-repo-check --idle-timeout 60 --codex-args`
 
 #### Subagent 模型选择
 
@@ -68,9 +66,9 @@
 ### 错误处理与重试策略
 
 - `.agent/tools/run_subagent.py` 只负责单次执行与返回状态，不做自动重试。
-- 主 Agent 根据 `response.json` 决定是否开启新 round 并重试。
+- 主 Agent 根据 `response.json` 决定是否开启新 subagent 并重试。
 
-
+---
 
 ## 任务执行规范
 
@@ -79,22 +77,18 @@
 1. [Code Subagent] 开发代码并编写且通过单元测试
 2. [Test Subagent] 执行集成测试
 
-
-
 ## 验收与质量控制
 
 - 以“预期输出”为唯一验收标准。
 - 不符合时必须返工，指出具体差距与修正方向。
 - 若涉及测试或验证，须在验收标准中明确要求。
 
-
-
 ## 风险与异常处理
 
 - 发现依赖缺失、权限不足或信息不全，立即暂停并请求澄清。
 - 不猜测、不兜底、不自作主张。
 
-
+---
 
 ## 项目的创建与初始化
 
@@ -121,7 +115,6 @@
 - phase 粒度适中：一轮对话可完成一个 phase，避免过大或过小。
 - task 粒度更小：确保 Subagent 可一次完成，尽量减少返工。
 - 每个 task 必须有清晰产物或验收标准，便于判定完成度。
-
 
 ### 初始化
 
