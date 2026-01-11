@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "execution_info": {
+    "engine": "",
+    "model": "",
+    "started_at": "",
+    "completed_at": "",
+    "duration_seconds": 0
+  },
+  "process_info": {
+    "pid": 0,
+    "exit_code": null
+  },
+  "command_info": {
+    "working_directory": "",
+    "command_args": []
+  },
+  "performance_metrics": {
+    "total_tokens": null,
+    "prompt_tokens": null,
+    "completion_tokens": null,
+    "api_calls_count": 0
+  },
+  "metadata": {
+    "hostname": "",
+    "platform": "",
+    "python_version": ""
+  }
+}

@@ -1,1 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment variables
+.env
+.env.local
+
+# Logs
+logs/
+
+# Agent audit trails (keep structure, ignore content)
+.agent/audit/*/request.json
+.agent/audit/*/response.json
+.agent/audit/*/stderr.txt
+
+# Build artifacts
+.agent/tools/__pycache__/
+.agent/tools/build/
+.agent/tools/dist/
+.agent/tools/*.exe
+.agent/tools/*.spec
+
+# Claude
+.claude/
+
+# Local test files
 issue.md
+quicksort
+quicksort.exe
+quicksort_new
